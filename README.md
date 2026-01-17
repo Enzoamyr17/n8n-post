@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Facebook Auto-Post Application
+
+A minimalist Facebook auto-posting application built with Next.js 14, where users can schedule posts with media uploads. Posts are automatically published via n8n workflow integration at scheduled times.
+
+## Features
+
+- User authentication (register/login)
+- Schedule posts with date and time (Philippine timezone)
+- Upload photos and videos to Cloudinary
+- Dashboard with posting metrics
+- Automated posting via n8n
+- Simple, clean UI
+
+## Tech Stack
+
+### Frontend
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+
+### Backend
+- **API:** Next.js API Routes
+- **Authentication:** NextAuth.js v4
+- **Password Hashing:** bcryptjs
+
+### Database
+- **Database:** PostgreSQL
+- **ORM:** Prisma
+
+### Media Storage
+- **Service:** Cloudinary
+
+### Automation
+- **Tool:** n8n
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18+
+- PostgreSQL database
+- Cloudinary account
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Quick Start
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See [SETUP.md](./SETUP.md) for detailed installation instructions.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install dependencies: `npm install`
+2. Setup `.env` file with your credentials
+3. Run migrations: `npx prisma migrate dev --name init`
+4. Start dev server: `npm run dev`
+5. Open [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+## Important: Timezone Configuration
 
-To learn more about Next.js, take a look at the following resources:
+**All dates and times are handled with Philippine Time (UTC+8):**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- User Interface displays times in Philippine Time
+- Database stores all timestamps in UTC+0
+- Automatic conversion between timezones
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
+- [SETUP.md](./SETUP.md) - Detailed setup guide
+- [MVP_DOCUMENTATION.md](./MVP_DOCUMENTATION.md) - Complete project documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
