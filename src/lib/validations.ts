@@ -26,13 +26,20 @@ export const createPostSchema = z.object({
   publishTime: z.string().min(1, 'Publish time is required'),
   files: z.array(z.object({
     url: z.string().url('Invalid file URL'),
-    caption: z.string().optional(),
+    caption: z.string().optional().default(''),
   })).min(1, 'At least one file is required').max(10, 'Maximum 10 files allowed'),
 }).transform((data) => {
   // Combine date and time into UTC datetime
   const publishDateTime = new Date(`${data.publishDate}T${data.publishTime}:00+08:00`);
+
+  // For single image or video, clear individual file captions (only use main post caption)
+  const files = data.files.length === 1
+    ? data.files.map(f => ({ ...f, caption: '' }))
+    : data.files;
+
   return {
     ...data,
+    files,
     publishDateTime: publishDateTime.toISOString(),
   };
 }).refine((data) => {

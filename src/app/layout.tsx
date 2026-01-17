@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Facebook Auto-Post",
+  title: "Motoproject ThaiParts By Renzo",
   description: "Schedule and automate Facebook posts",
 };
 

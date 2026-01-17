@@ -142,10 +142,13 @@ export function PostForm({ initialData, postId }: PostFormProps) {
         />
       </div>
 
-      {/* Info about allowed file types */}
+      {/* Info about allowed file types and captions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+        <p className="text-sm text-blue-800 mb-2">
           <strong>Allowed:</strong> Single image, multiple images (up to 10), or single video only. Mixed media is not allowed.
+        </p>
+        <p className="text-sm text-blue-700">
+          <strong>Captions:</strong> The main caption above applies to the post. Individual image captions only appear for multiple images (carousel posts).
         </p>
       </div>
 
