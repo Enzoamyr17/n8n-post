@@ -29,6 +29,13 @@ export const createPostSchema = z.object({
     url: z.string().url('Invalid file URL'),
     caption: z.string().optional(),
   })).min(1, 'At least one file is required').max(10, 'Maximum 10 files allowed'),
+}).transform((data) => {
+  // Combine date and time into UTC datetime
+  const publishDateTime = new Date(`${data.publishDate}T${data.publishTime}:00+08:00`);
+  return {
+    ...data,
+    publishDateTime: publishDateTime.toISOString(),
+  };
 });
 
 // Post update schema
@@ -38,6 +45,16 @@ export const updatePostSchema = z.object({
   publishTime: z.string().optional(),
   type: z.enum(['SINGLE_IMAGE', 'SINGLE_VIDEO', 'MULTIPLE_IMAGES', 'MULTIPLE_VIDEOS', 'MIXED_MEDIA']).optional(),
   isPublished: z.boolean().optional(),
+}).transform((data) => {
+  // If both date and time are provided, combine them into UTC datetime
+  if (data.publishDate && data.publishTime) {
+    const publishDateTime = new Date(`${data.publishDate}T${data.publishTime}:00+08:00`);
+    return {
+      ...data,
+      publishDateTime: publishDateTime.toISOString(),
+    };
+  }
+  return data;
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

@@ -18,10 +18,13 @@ export async function GET(request: Request) {
     const windowEnd = new Date(now.getTime() + WINDOW_MINUTES * 60 * 1000);
 
     // Fetch pending posts within time window
-    // Note: We need to combine date and time for comparison
-    const allPendingPosts = await prisma.post.findMany({
+    const posts = await prisma.post.findMany({
       where: {
         isPublished: false,
+        publishDateTime: {
+          gte: windowStart,
+          lte: windowEnd,
+        },
       },
       include: {
         user: {
@@ -34,16 +37,6 @@ export async function GET(request: Request) {
         },
         files: true,
       },
-    });
-
-    // Filter posts by combining date and time
-    const posts = allPendingPosts.filter((post: any) => {
-      // Combine publishDate and publishTime
-      const dateStr = post.publishDate.toISOString().split('T')[0];
-      const timeStr = post.publishTime.toISOString().split('T')[1];
-      const combinedDateTime = new Date(`${dateStr}T${timeStr}`);
-
-      return combinedDateTime >= windowStart && combinedDateTime <= windowEnd;
     });
 
     return NextResponse.json({
@@ -64,8 +57,7 @@ export async function GET(request: Request) {
         })),
         type: post.type,
         isVideo: post.isVideo,
-        publishDate: post.publishDate,
-        publishTime: post.publishTime,
+        publishDateTime: post.publishDateTime,
       })),
     });
 

@@ -103,12 +103,9 @@ export async function PATCH(
       updateData.caption = validatedData.caption;
     }
 
-    if (validatedData.publishDate !== undefined && validatedData.publishTime !== undefined) {
-      const publishDateTime = new Date(`${validatedData.publishDate}T${validatedData.publishTime}:00+08:00`);
-      const utcDateTime = new Date(publishDateTime.toISOString());
-
-      updateData.publishDate = new Date(utcDateTime.toISOString().split('T')[0]);
-      updateData.publishTime = new Date(`1970-01-01T${utcDateTime.toISOString().split('T')[1].split('.')[0]}`);
+    // Check if publishDateTime was added by transform (when both date and time provided)
+    if ('publishDateTime' in validatedData) {
+      updateData.publishDateTime = new Date((validatedData as any).publishDateTime);
     }
 
     if (validatedData.type !== undefined) {

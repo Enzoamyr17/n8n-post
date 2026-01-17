@@ -86,13 +86,10 @@ export async function POST(request: Request) {
 
     // Validate input
     const validatedData = createPostSchema.parse(body);
-    const { caption, publishDate, publishTime, type, files } = validatedData;
-
-    // Combine date and time to UTC
-    const publishDateTime = new Date(`${publishDate}T${publishTime}:00+08:00`); // Philippine time
-    const utcDateTime = new Date(publishDateTime.toISOString());
+    const { caption, publishDateTime, type, files } = validatedData;
 
     // Check if date is in the past
+    const utcDateTime = new Date(publishDateTime);
     if (utcDateTime < new Date()) {
       return NextResponse.json(
         { error: 'Cannot schedule post in the past' },
@@ -107,17 +104,12 @@ export async function POST(request: Request) {
       f.url.toLowerCase().includes('.mov')
     );
 
-    // Extract date and time separately for storage
-    const dateOnly = new Date(utcDateTime.toISOString().split('T')[0]);
-    const timeOnly = new Date(`1970-01-01T${utcDateTime.toISOString().split('T')[1].split('.')[0]}`);
-
     // Create post with files
     const post = await prisma.post.create({
       data: {
         userId: user.id,
         caption,
-        publishDate: dateOnly,
-        publishTime: timeOnly,
+        publishDateTime: utcDateTime,
         type,
         typeCount: files.length,
         isVideo,

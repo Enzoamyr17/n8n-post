@@ -9,8 +9,7 @@ export interface Post {
   id: number;
   caption: string;
   type: string;
-  publishDate: string;
-  publishTime: string;
+  publishDateTime: string;
   isPublished: boolean;
   typeCount: number;
   isVideo: boolean;

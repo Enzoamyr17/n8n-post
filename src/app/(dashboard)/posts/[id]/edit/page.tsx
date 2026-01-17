@@ -46,14 +46,21 @@ export default function EditPostPage() {
     );
   }
 
+  // Convert UTC publishDateTime to Philippine Time for editing
+  const publishDateTime = new Date(post.publishDateTime);
+  // Add 8 hours to convert UTC to Philippine Time
+  const philippineTime = new Date(publishDateTime.getTime() + (8 * 60 * 60 * 1000));
+  const publishDate = philippineTime.toISOString().split('T')[0];
+  const publishTime = philippineTime.toISOString().split('T')[1].substring(0, 5);
+
   return (
     <div>
       <DashboardHeader title="Edit Post" showCreateButton={false} />
       <PostForm
         initialData={{
           caption: post.caption,
-          publishDate: post.publishDate.split('T')[0],
-          publishTime: post.publishTime.split('T')[1].substring(0, 5),
+          publishDate,
+          publishTime,
           type: post.type,
           files: post.files.map((f: any) => ({
             id: f.id,

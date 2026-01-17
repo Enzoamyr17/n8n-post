@@ -32,26 +32,25 @@ model User {
 // Post model
 // NOTE: All dates are stored in UTC+0, application handles conversion to Philippine Time (UTC+8)
 model Post {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  type        PostType
-  typeCount   Int       @default(1)  // Number of files
-  caption     String    @db.Text
-  publishDate DateTime  @db.Date     // Stored in UTC
-  publishTime DateTime  @db.Time     // Stored in UTC
-  isPublished Boolean   @default(false)
-  isVideo     Boolean   @default(false)
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  type            PostType
+  typeCount       Int       @default(1)  // Number of files
+  caption         String    @db.Text
+  publishDateTime DateTime  // Combined date and time stored in UTC
+  isPublished     Boolean   @default(false)
+  isVideo         Boolean   @default(false)
 
   // Relations
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  files       PostFile[]
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files           PostFile[]
 
   // Timestamps (stored in UTC)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@index([userId])
-  @@index([publishDate, isPublished])
+  @@index([publishDateTime, isPublished])
   @@index([isPublished])
 }
 

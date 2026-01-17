@@ -10,8 +10,7 @@ interface Post {
   id: number;
   caption: string;
   type: string;
-  publishDate: string;
-  publishTime: string;
+  publishDateTime: string;
   isPublished: boolean;
 }
 
@@ -33,10 +32,7 @@ export function PostsTable({ posts, onDelete }: PostsTableProps) {
               Type
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Publish Date
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Publish Time
+              Publish Date & Time
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
@@ -49,7 +45,7 @@ export function PostsTable({ posts, onDelete }: PostsTableProps) {
         <tbody className="bg-white divide-y divide-gray-200">
           {posts.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+              <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
                 No posts found
               </td>
             </tr>
@@ -68,12 +64,7 @@ export function PostsTable({ posts, onDelete }: PostsTableProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500">
-                    {format(new Date(post.publishDate), 'MMM dd, yyyy')}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">
-                    {post.publishTime}
+                    {format(new Date(post.publishDateTime), 'MMM dd, yyyy HH:mm')}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
