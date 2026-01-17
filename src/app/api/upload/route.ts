@@ -50,9 +50,13 @@ export async function POST(request: Request) {
     // Determine resource type
     const resourceType = validVideoTypes.includes(file.type) ? 'video' : 'image';
 
+    // Create user-specific folder path (sanitize email for folder name)
+    const sanitizedEmail = session.user.email.replace(/[^a-zA-Z0-9]/g, '_');
+    const userFolder = `facebook-posts/${sanitizedEmail}`;
+
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(dataURI, {
-      folder: 'facebook-posts',
+      folder: userFolder,
       resource_type: resourceType,
       transformation: resourceType === 'image' ? [
         { width: 1200, height: 1200, crop: 'limit' },
