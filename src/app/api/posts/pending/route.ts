@@ -1,12 +1,24 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
     // Verify API key
     const apiKey = request.headers.get('x-api-key');
     if (apiKey !== process.env.N8N_API_KEY) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Parse request body
+    const body = await request.json();
+    const { email } = body;
+
+    // Validate email is provided
+    if (!email || typeof email !== 'string') {
+      return NextResponse.json(
+        { error: 'Email is required in request body' },
+        { status: 400 }
+      );
     }
 
     // Get current time in UTC
@@ -17,13 +29,16 @@ export async function GET(request: Request) {
     const windowStart = new Date(now.getTime() - WINDOW_MINUTES * 60 * 1000);
     const windowEnd = new Date(now.getTime() + WINDOW_MINUTES * 60 * 1000);
 
-    // Fetch pending posts within time window
+    // Fetch pending posts within time window for the specified user email
     const posts = await prisma.post.findMany({
       where: {
         isPublished: false,
         publishDateTime: {
           gte: windowStart,
           lte: windowEnd,
+        },
+        user: {
+          email: email,
         },
       },
       include: {
