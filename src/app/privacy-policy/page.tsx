@@ -114,7 +114,28 @@ export default function PrivacyPolicyPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Contact Us</h2>
             <p className="text-gray-700 mb-4">
-              If you have any questions about this privacy policy or our privacy practices, please contact us.
+              If you have any questions about this privacy policy, our privacy practices, or would like to exercise any of your rights, please contact us:
+            </p>
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Email:</p>
+                  <a
+                    href="mailto:gregoriorenzo05@gmail.com"
+                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                  >
+                    gregoriorenzo05@gmail.com
+                  </a>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Response Time:</p>
+                  <p className="text-gray-700">We aim to respond to all inquiries within 48 hours.</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-gray-700 mt-4">
+              When contacting us about your personal data, please include your full name and email address associated with your account
+              to help us verify your identity and respond to your request more efficiently.
             </p>
           </section>
         </div>
