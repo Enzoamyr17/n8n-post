@@ -8,9 +8,11 @@ import { PostsTable } from '@/components/dashboard/PostsTable';
 import { FileText, CheckCircle, Clock, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import type { Stats, Post } from '@/types';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { showToast, showTip } = useToast();
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,13 +36,32 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        showToast('Failed to load dashboard data', 'error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [showToast]);
+
+  // Show welcome tip on dashboard load
+  useEffect(() => {
+    const tips = [
+      'Review your pending posts regularly to ensure they publish on time!',
+      'Click on any post to edit or reschedule it.',
+      'Keep track of your published posts to analyze engagement patterns.',
+      'Your posts are automatically published at the scheduled time.',
+      'Schedule multiple posts in advance to save time!',
+    ];
+
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    const timer = setTimeout(() => {
+      showTip(randomTip);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [showTip]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
@@ -59,13 +80,13 @@ export default function DashboardPage() {
             pending: stats.pending - 1,
           });
         }
-        alert('Post deleted successfully');
+        showToast('Post deleted successfully', 'success');
       } else {
-        alert('Failed to delete post');
+        showToast('Failed to delete post', 'error');
       }
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('Failed to delete post');
+      showToast('Failed to delete post', 'error');
     }
   };
 

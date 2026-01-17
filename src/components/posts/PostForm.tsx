@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MediaUpload } from './MediaUpload';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { useToast } from '@/contexts/ToastContext';
 
 interface MediaFile {
   id: string;
@@ -26,6 +27,7 @@ interface PostFormProps {
 
 export function PostForm({ initialData, postId }: PostFormProps) {
   const router = useRouter();
+  const { showToast, showTip } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     caption: initialData?.caption || '',
@@ -34,27 +36,45 @@ export function PostForm({ initialData, postId }: PostFormProps) {
     files: initialData?.files || [] as MediaFile[],
   });
 
+  // Show tips when component mounts
+  useEffect(() => {
+    const tips = [
+      'Posts scheduled between 1-3 PM typically get more engagement!',
+      'Use high-quality images for better reach on Facebook.',
+      'Add descriptive captions to make your posts more accessible.',
+      'You can upload up to 10 images for a carousel post.',
+      'Schedule posts in advance to maintain consistent engagement!',
+    ];
+
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    const timer = setTimeout(() => {
+      showTip(randomTip);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [showTip]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validation
     if (formData.files.length === 0) {
-      alert('Please upload at least one file');
+      showToast('Please upload at least one file', 'warning');
       return;
     }
 
     if (!formData.caption.trim()) {
-      alert('Please enter a caption');
+      showToast('Please enter a caption', 'warning');
       return;
     }
 
     if (!formData.publishDate) {
-      alert('Please select a publish date');
+      showToast('Please select a publish date', 'warning');
       return;
     }
 
     if (!formData.publishTime) {
-      alert('Please select a publish time');
+      showToast('Please select a publish time', 'warning');
       return;
     }
 
@@ -83,11 +103,18 @@ export function PostForm({ initialData, postId }: PostFormProps) {
         throw new Error(error.error || 'Failed to save post');
       }
 
-      alert(postId ? 'Post updated successfully!' : 'Post scheduled successfully!');
-      router.push('/dashboard');
+      showToast(
+        postId ? 'Post updated successfully!' : 'Post scheduled successfully!',
+        'success'
+      );
+
+      // Navigate after a brief delay to show the success message
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
     } catch (error: any) {
       console.error('Error saving post:', error);
-      alert(error.message || 'Failed to save post');
+      showToast(error.message || 'Failed to save post', 'error');
     } finally {
       setLoading(false);
     }

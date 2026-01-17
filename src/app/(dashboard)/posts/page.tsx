@@ -5,8 +5,10 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { PostsTable } from '@/components/dashboard/PostsTable';
 import { Select } from '@/components/ui/Select';
 import type { Post } from '@/types';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function PostsPage() {
+  const { showToast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -26,13 +28,14 @@ export default function PostsPage() {
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
+        showToast('Failed to load posts', 'error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchPosts();
-  }, [filter]);
+  }, [filter, showToast]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
@@ -44,13 +47,13 @@ export default function PostsPage() {
 
       if (response.ok) {
         setPosts(posts.filter(p => p.id !== id));
-        alert('Post deleted successfully');
+        showToast('Post deleted successfully', 'success');
       } else {
-        alert('Failed to delete post');
+        showToast('Failed to delete post', 'error');
       }
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('Failed to delete post');
+      showToast('Failed to delete post', 'error');
     }
   };
 

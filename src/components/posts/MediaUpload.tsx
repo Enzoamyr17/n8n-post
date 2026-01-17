@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone, type Accept } from 'react-dropzone';
 import { Upload, X, Loader2 } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
 
 interface MediaFile {
   id: string;
@@ -24,6 +25,7 @@ interface MediaUploadProps {
 }
 
 export function MediaUpload({ maxFiles = 10, onFilesChange, initialFiles = [] }: MediaUploadProps) {
+  const { showToast } = useToast();
   const [files, setFiles] = useState<MediaFile[]>(initialFiles);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
 
@@ -37,13 +39,13 @@ export function MediaUpload({ maxFiles = 10, onFilesChange, initialFiles = [] }:
 
       // Prevent mixed media
       if (newFileTypes.some(type => type !== existingType)) {
-        alert(`You can only upload ${existingType}s. Mixed media is not allowed.`);
+        showToast(`You can only upload ${existingType}s. Mixed media is not allowed.`, 'warning');
         return;
       }
 
       // If existing files are videos, don't allow any more uploads
       if (existingType === 'video') {
-        alert('Only one video is allowed per post.');
+        showToast('Only one video is allowed per post.', 'warning');
         return;
       }
     }
@@ -51,13 +53,13 @@ export function MediaUpload({ maxFiles = 10, onFilesChange, initialFiles = [] }:
     // Check if trying to upload multiple videos
     const videoFiles = acceptedFiles.filter(file => file.type.startsWith('video/'));
     if (videoFiles.length > 1) {
-      alert('You can only upload one video per post.');
+      showToast('You can only upload one video per post.', 'warning');
       return;
     }
 
     // If uploading a video and there are already files, reject
     if (videoFiles.length > 0 && files.length > 0) {
-      alert('You can only upload one video per post.');
+      showToast('You can only upload one video per post.', 'warning');
       return;
     }
 
@@ -102,12 +104,18 @@ export function MediaUpload({ maxFiles = 10, onFilesChange, initialFiles = [] }:
 
       setFiles(newFiles);
       onFilesChange(newFiles);
+
+      // Show success message
+      showToast(
+        `Successfully uploaded ${uploadedFiles.length} file${uploadedFiles.length > 1 ? 's' : ''}`,
+        'success'
+      );
     } catch (error: any) {
       console.error('Upload error:', error);
-      alert(error.message || 'Failed to upload files');
+      showToast(error.message || 'Failed to upload files', 'error');
       setUploadingFiles([]);
     }
-  }, [files, maxFiles, onFilesChange]);
+  }, [files, maxFiles, onFilesChange, showToast]);
 
   // Determine what file types to accept based on existing files
   const getAcceptedFileTypes = (): Accept | undefined => {

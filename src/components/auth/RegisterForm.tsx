@@ -6,9 +6,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
+import { useToast } from '@/contexts/ToastContext';
 
 export function RegisterForm() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -73,8 +75,10 @@ export function RegisterForm() {
         return;
       }
 
-      alert('Registration successful! Please login.');
-      router.push('/login');
+      showToast('Registration successful! Please login.', 'success');
+      setTimeout(() => {
+        router.push('/login');
+      }, 1000);
     } catch (error) {
       setErrors({ general: 'An error occurred. Please try again.' });
     } finally {
