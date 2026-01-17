@@ -108,10 +108,6 @@ export async function PATCH(
       updateData.publishDateTime = new Date((validatedData as any).publishDateTime);
     }
 
-    if (validatedData.type !== undefined) {
-      updateData.type = validatedData.type;
-    }
-
     if (validatedData.isPublished !== undefined) {
       updateData.isPublished = validatedData.isPublished;
     }

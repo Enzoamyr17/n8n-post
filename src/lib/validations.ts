@@ -24,7 +24,6 @@ export const createPostSchema = z.object({
   caption: z.string().min(1, 'Caption is required').max(2000, 'Caption must be less than 2000 characters'),
   publishDate: z.string().min(1, 'Publish date is required'),
   publishTime: z.string().min(1, 'Publish time is required'),
-  type: z.enum(['SINGLE_IMAGE', 'SINGLE_VIDEO', 'MULTIPLE_IMAGES', 'MULTIPLE_VIDEOS', 'MIXED_MEDIA']),
   files: z.array(z.object({
     url: z.string().url('Invalid file URL'),
     caption: z.string().optional(),
@@ -36,6 +35,37 @@ export const createPostSchema = z.object({
     ...data,
     publishDateTime: publishDateTime.toISOString(),
   };
+}).refine((data) => {
+  // Check for mixed media (not allowed)
+  const hasVideo = data.files.some((f: any) =>
+    f.url.toLowerCase().includes('video') ||
+    f.url.toLowerCase().includes('.mp4') ||
+    f.url.toLowerCase().includes('.mov') ||
+    f.url.toLowerCase().includes('.avi') ||
+    f.url.toLowerCase().includes('.webm')
+  );
+  const hasImage = data.files.some((f: any) =>
+    f.url.toLowerCase().includes('image') ||
+    f.url.toLowerCase().includes('.jpg') ||
+    f.url.toLowerCase().includes('.jpeg') ||
+    f.url.toLowerCase().includes('.png') ||
+    f.url.toLowerCase().includes('.gif') ||
+    f.url.toLowerCase().includes('.webp')
+  );
+
+  // If mixed media, reject
+  if (hasVideo && hasImage) {
+    return false;
+  }
+
+  // If video, only allow single video
+  if (hasVideo && data.files.length > 1) {
+    return false;
+  }
+
+  return true;
+}, {
+  message: 'Invalid file combination. Allowed: single image, multiple images (up to 10), or single video only. Mixed media is not allowed.',
 });
 
 // Post update schema
@@ -43,7 +73,6 @@ export const updatePostSchema = z.object({
   caption: z.string().min(1, 'Caption is required').max(2000, 'Caption must be less than 2000 characters').optional(),
   publishDate: z.string().optional(),
   publishTime: z.string().optional(),
-  type: z.enum(['SINGLE_IMAGE', 'SINGLE_VIDEO', 'MULTIPLE_IMAGES', 'MULTIPLE_VIDEOS', 'MIXED_MEDIA']).optional(),
   isPublished: z.boolean().optional(),
 }).transform((data) => {
   // If both date and time are provided, combine them into UTC datetime

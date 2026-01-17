@@ -6,7 +6,6 @@ import { MediaUpload } from './MediaUpload';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select } from '@/components/ui/Select';
 
 interface MediaFile {
   id: string;
@@ -20,7 +19,6 @@ interface PostFormProps {
     caption: string;
     publishDate: string;
     publishTime: string;
-    type: string;
     files: MediaFile[];
   };
   postId?: number;
@@ -33,7 +31,6 @@ export function PostForm({ initialData, postId }: PostFormProps) {
     caption: initialData?.caption || '',
     publishDate: initialData?.publishDate || '',
     publishTime: initialData?.publishTime || '',
-    type: initialData?.type || 'SINGLE_IMAGE',
     files: initialData?.files || [] as MediaFile[],
   });
 
@@ -74,7 +71,6 @@ export function PostForm({ initialData, postId }: PostFormProps) {
           caption: formData.caption,
           publishDate: formData.publishDate,
           publishTime: formData.publishTime,
-          type: formData.type,
           files: formData.files.map(f => ({
             url: f.url,
             caption: f.caption,
@@ -146,18 +142,12 @@ export function PostForm({ initialData, postId }: PostFormProps) {
         />
       </div>
 
-      {/* Post Type */}
-      <Select
-        label="Post Type"
-        value={formData.type}
-        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-      >
-        <option value="SINGLE_IMAGE">Single Image</option>
-        <option value="SINGLE_VIDEO">Single Video</option>
-        <option value="MULTIPLE_IMAGES">Multiple Images</option>
-        <option value="MULTIPLE_VIDEOS">Multiple Videos</option>
-        <option value="MIXED_MEDIA">Mixed Media</option>
-      </Select>
+      {/* Info about allowed file types */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-blue-800">
+          <strong>Allowed:</strong> Single image, multiple images (up to 10), or single video only. Mixed media is not allowed.
+        </p>
+      </div>
 
       {/* Submit Buttons */}
       <div className="flex gap-4">

@@ -71,10 +71,9 @@ model PostFile {
 }
 
 // Post type enum
+// Only supporting single image, multiple images, and single video
 enum PostType {
   SINGLE_IMAGE
   SINGLE_VIDEO
   MULTIPLE_IMAGES
-  MULTIPLE_VIDEOS
-  MIXED_MEDIA
 }

@@ -61,7 +61,6 @@ export default function EditPostPage() {
           caption: post.caption,
           publishDate,
           publishTime,
-          type: post.type,
           files: post.files.map((f: any) => ({
             id: f.id,
             url: f.url,

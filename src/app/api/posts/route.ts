@@ -86,7 +86,7 @@ export async function POST(request: Request) {
 
     // Validate input
     const validatedData = createPostSchema.parse(body);
-    const { caption, publishDateTime, type, files } = validatedData;
+    const { caption, publishDateTime, files } = validatedData;
 
     // Check if date is in the past
     const utcDateTime = new Date(publishDateTime);
@@ -97,12 +97,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Detect if any file is a video
+    // Auto-detect post type based on files
     const isVideo = files.some((f: any) =>
       f.url.toLowerCase().includes('video') ||
       f.url.toLowerCase().includes('.mp4') ||
-      f.url.toLowerCase().includes('.mov')
+      f.url.toLowerCase().includes('.mov') ||
+      f.url.toLowerCase().includes('.avi') ||
+      f.url.toLowerCase().includes('.webm')
     );
+
+    // Determine post type automatically
+    let type: 'SINGLE_IMAGE' | 'SINGLE_VIDEO' | 'MULTIPLE_IMAGES';
+    if (isVideo) {
+      type = 'SINGLE_VIDEO'; // Only single video allowed
+    } else if (files.length === 1) {
+      type = 'SINGLE_IMAGE';
+    } else {
+      type = 'MULTIPLE_IMAGES';
+    }
 
     // Create post with files
     const post = await prisma.post.create({
